@@ -19,8 +19,8 @@ just the data writing side
 ## Arbiter module definition
 
     input [7:0] i_data,                     // incoming data bus
-    input [NUM_MODULES-1:0] i_req           // write request from Writer module
-    output [NUM_MODULES-1:0] o_busy         // busy line, Writer must keep data
+    input [NUM_WRITERS-1:0] i_req           // write request from Writer module
+    output [NUM_WRITERS-1:0] o_busy         // busy line, Writer must keep data
 
     output o_we,                            // write to FIFO
     output [7:0] o_data                     // data out

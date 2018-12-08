@@ -1,0 +1,23 @@
+[*]
+[*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
+[*] Sat Dec  8 20:11:53 2018
+[*]
+[dumpfile] "/home/mattvenn/work/fpga/fifo_arbiter/arbiter_cover/engine_0/trace0.vcd"
+[dumpfile_mtime] "Sat Dec  8 20:11:13 2018"
+[dumpfile_size] 1807
+[savefile] "/home/mattvenn/work/fpga/fifo_arbiter/arbiter_cover.gtkw"
+[timestart] 0
+[size] 1000 600
+[pos] -1 -1
+*-5.398830 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 263
+[signals_width] 140
+[sst_expanded] 1
+[sst_vpaned_height] 155
+@28
+arbiter.i_clk
+arbiter.i_reset
+@29
+arbiter.o_busy[1:0]
+[pattern_trace] 1
+[pattern_trace] 0
