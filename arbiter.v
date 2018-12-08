@@ -17,7 +17,7 @@ module arbiter
 );
     
     initial begin
-        o_busy <= {NUM_WRITERS{1'b1}};
+        o_busy = {NUM_WRITERS{1'b1}};
     end
 
     always @(posedge i_clk) begin
@@ -36,21 +36,23 @@ module arbiter
         initial assert(o_busy == {NUM_WRITERS{1'b1}});
 
         // count busy lines
-        reg [1:0] busy_lines = 0;  //initialize count variable.
+        reg [1:0] busy_lines;  //initialize count variable.
 
         integer i;
-        always @(o_busy) begin
+        always @(*) begin
             busy_lines = 0;
             for(i=0;i<NUM_WRITERS;i=i+1)
                 if(o_busy[i] == 1'b1)
                     busy_lines = busy_lines + 1;
         end
+            
         
         always @(posedge i_clk)
             if(f_past_valid)
-                assert(busy_lines >= 0); //NUM_WRITERS -1);
+                assert(busy_lines >= NUM_WRITERS -1);
 
         always @(posedge i_clk)
-            cover(o_busy[0] == 0);
+            cover(busy_lines == NUM_WRITERS - 1);
+
     `endif
 endmodule
