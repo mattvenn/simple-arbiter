@@ -1,0 +1,20 @@
+[tasks]
+cover
+proof
+
+[options]
+proof: mode prove
+proof: depth 10
+cover: mode cover
+cover: depth 60
+cover: append 10
+
+[engines]
+smtbmc
+
+[script]
+read -formal writer.v
+prep -top writer
+
+[files]
+writer.v
