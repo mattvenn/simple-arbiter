@@ -21,7 +21,8 @@ module arbiter
     end
 
     always @(posedge i_clk) begin
-        o_busy[0] <= 0;
+        if(i_req[0])
+            o_busy[0] <= 0;
     end
 
     `ifdef FORMAL
