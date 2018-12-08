@@ -5,12 +5,12 @@ module writer
     parameter       COUNTER_MAX = 10
 )
 (
-    input           clk,
-    input           reset,
+    input           i_clk,
+    input           i_reset,
     
-    input           busy,
-    output reg      req,
-    output [7:0]    data
+    input           i_busy,
+    output reg      o_req,
+    output [7:0]    o_data
 );
 
     localparam STATE_START  = 1;
@@ -21,18 +21,18 @@ module writer
     reg [$clog2(STATE_END)-1:0] state = STATE_RUN;
     reg [7:0] counter = 0;
 
-    assign data = (busy == 0 && req == 1) ? counter : 8'hZZ;
+    assign o_data = (i_busy == 0 && o_req == 1) ? counter : 8'hZZ;
 
-    always @(posedge clk) begin
-        if(reset) begin
+    always @(posedge i_clk) begin
+        if(i_reset) begin
             state <= STATE_START;
             counter <= 0;
-            req <= 0;
+            o_req <= 0;
         end
         case(state)
             STATE_START: begin
                 counter <= 0;
-                req <= 0;
+                o_req <= 0;
                 state <= STATE_RUN;
             end
 
@@ -43,10 +43,10 @@ module writer
             end
 
             STATE_REQ: begin
-                req <= 1;
-                if(busy == 0) begin
+                o_req <= 1;
+                if(i_busy == 0) begin
                     state <= STATE_START;
-                    req <= 0;
+                    o_req <= 0;
                 end
             end
         endcase
@@ -56,18 +56,18 @@ module writer
         
         // past valid signal
         reg f_past_valid = 0;
-        always @(posedge clk)
+        always @(posedge i_clk)
             f_past_valid <= 1'b1;
 
-        // start in reset
-        initial restrict(reset);
+        // start in i_reset
+        initial restrict(i_reset);
 
-        always @(posedge clk)
+        always @(posedge i_clk)
             assert(state < STATE_END);
 
-        always @(posedge clk)
+        always @(posedge i_clk)
             if(f_past_valid)
-                cover(state == STATE_REQ && req == 1 && busy == 1);
+                cover(state == STATE_REQ && o_req == 1 && i_busy == 1);
 
     `endif
 endmodule
