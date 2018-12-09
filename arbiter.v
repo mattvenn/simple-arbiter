@@ -37,7 +37,7 @@ module arbiter
         initial assert(o_busy == {NUM_WRITERS{1'b1}});
 
         // count busy lines
-        reg [1:0] busy_lines;  //initialize count variable.
+        reg [$clog2(NUM_WRITERS):0] busy_lines;  //initialize count variable.
 
         integer i;
         always @(*) begin
