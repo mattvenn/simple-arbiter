@@ -2,7 +2,8 @@
 
 module writer
 #(
-    parameter       COUNTER_MAX = 5
+    parameter       COUNTER_MAX = 5,
+    parameter       DATA_W      = 8
 )
 (
     input               i_clk,
@@ -10,7 +11,7 @@ module writer
     
     input               i_busy,
     output reg          o_req,
-    output reg [7:0]    o_data
+    output reg [DATA_W-1:0]    o_data
 );
 
     localparam STATE_START  = 0;
@@ -19,7 +20,7 @@ module writer
     localparam STATE_END    = 3;
 
     reg [$clog2(STATE_END)-1:0] state = STATE_RUN;
-    reg [7:0] counter = 0;
+    reg [$clog2(COUNTER_MAX)-1:0] counter = 0;
 
 //    assign o_data = (i_busy == 0 && o_req == 1) ? counter : 8'hZZ;
 

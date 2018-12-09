@@ -50,7 +50,7 @@ module arbiter
         generate
             genvar j;
             for(j=0;j<NUM_WRITERS;j=j+1)
-                writer #(.COUNTER_MAX(3+j)) writer_inst (.i_clk(i_clk), .i_reset(i_reset), .i_busy(o_busy[j]), .o_req(i_req[j]), .o_data(i_data[j*DATA_W+DATA_W-1:j*DATA_W]));
+                writer #(.COUNTER_MAX(3+j), .DATA_W(DATA_W)) writer_inst (.i_clk(i_clk), .i_reset(i_reset), .i_busy(o_busy[j]), .o_req(i_req[j]), .o_data(i_data[j*DATA_W+DATA_W-1:j*DATA_W]));
         endgenerate
 
         reg [3:0] records;
