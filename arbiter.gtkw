@@ -1,24 +1,26 @@
 [*]
 [*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
-[*] Sun Dec  9 15:34:29 2018
+[*] Sun Dec  9 16:09:00 2018
 [*]
-[dumpfile] "/home/mattvenn/work/fpga/simple_arbiter/arbiter_cover/engine_0/trace0.vcd"
-[dumpfile_mtime] "Sun Dec  9 15:34:08 2018"
-[dumpfile_size] 3130
+[dumpfile] "/home/mattvenn/work/fpga/simple_arbiter/arbiter_cover/engine_0/trace4.vcd"
+[dumpfile_mtime] "Sun Dec  9 16:03:30 2018"
+[dumpfile_size] 11524
 [savefile] "/home/mattvenn/work/fpga/simple_arbiter/arbiter.gtkw"
 [timestart] 0
-[size] 1413 600
+[size] 1413 717
 [pos] -1 -1
-*-5.398830 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-5.398830 280 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] arbiter.
 [sst_width] 263
 [signals_width] 216
 [sst_expanded] 1
-[sst_vpaned_height] 155
+[sst_vpaned_height] 193
 @28
 arbiter.i_clk
 arbiter.i_reset
 @200
 -
+-arbiter
 @24
 arbiter.busy_lines[1:0]
 arbiter.req_lines[1:0]
@@ -45,7 +47,22 @@ arbiter.i_req[1:0]
 @22
 arbiter.i_data[15:0]
 arbiter.o_data[7:0]
-@29
+@28
 arbiter.o_we
+@200
+-
+-fifo
+@28
+arbiter.fifo_inst.clk
+@24
+arbiter.fifo_inst.records[2:0]
+@28
+arbiter.fifo_inst.we
+@22
+arbiter.fifo_inst.wdata[7:0]
+@29
+arbiter.fifo_inst.re
+@22
+arbiter.fifo_inst.rdata[7:0]
 [pattern_trace] 1
 [pattern_trace] 0

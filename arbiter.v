@@ -51,6 +51,10 @@ module arbiter
             for(j=0;j<NUM_WRITERS;j=j+1)
                 writer #(.COUNTER_MAX(3+j)) writer_inst (.i_clk(i_clk), .i_reset(i_reset), .i_busy(o_busy[j]), .o_req(i_req[j]), .o_data(i_data[j*8+7:j*8]));
         endgenerate
+
+        reg [3:0] records;
+        reg o_re = 0; // never read from the fifo
+        fifo fifo_inst(.clk(i_clk), .reset(i_reset), .re(o_re), .we(o_we), .wdata(o_data), .records(records));
         
         // past valid signal
         reg f_past_valid = 0;
@@ -125,5 +129,7 @@ module arbiter
             if(f_past_valid)
                 cover($past(!i_reset) && &i_req);
 
+        always @(posedge i_clk)
+            cover(records == 4);
     `endif
 endmodule
