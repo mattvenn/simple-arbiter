@@ -13,10 +13,10 @@ module writer
     output [7:0]    o_data
 );
 
-    localparam STATE_START  = 1;
-    localparam STATE_RUN    = 2;
-    localparam STATE_REQ    = 3;
-    localparam STATE_END    = 4;
+    localparam STATE_START  = 0;
+    localparam STATE_RUN    = 1;
+    localparam STATE_REQ    = 2;
+    localparam STATE_END    = 3;
 
     reg [$clog2(STATE_END)-1:0] state = STATE_RUN;
     reg [7:0] counter = 0;
@@ -61,6 +61,10 @@ module writer
         // start in i_reset
         initial restrict(i_reset);
 
+        // don't let induction get counter over limit
+        always @(posedge i_clk)
+            assume(counter <= COUNTER_MAX);
+
         // state machine stays bounded
         always @(posedge i_clk)
             assert(state < STATE_END);
@@ -70,6 +74,12 @@ module writer
             if(f_past_valid)
                 if(!$past(i_reset) && $past(o_req) && $past(i_busy))
                     assert($stable(o_req));
+
+        // after getting no busy, assert req is dropped after 1 cycle
+        always @(posedge i_clk)
+            if(f_past_valid)
+                if(!$past(i_reset) && $past(o_req) && $past(!i_busy))
+                    assert(!o_req);
 
 
         // cover requesting write while arbiter is busy

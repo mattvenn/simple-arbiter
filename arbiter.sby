@@ -14,7 +14,9 @@ smtbmc
 
 [script]
 read -formal arbiter.v
+read -formal writer.v
 prep -top arbiter
 
 [files]
 arbiter.v
+writer.v
