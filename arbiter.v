@@ -20,9 +20,22 @@ module arbiter
         o_busy = {NUM_WRITERS{1'b1}};
     end
 
+    reg [$clog2(NUM_WRITERS)-1:0] next_access = 0;
+
+    // pass data straight through
+    assign o_data = i_data;
+
+    // bus arbiter
     always @(posedge i_clk) begin
-        if(i_req[0])
-            o_busy[0] <= 0;
+        if(&o_busy) begin
+            if(i_req) begin
+                for(i=0;i<NUM_WRITERS;i=i+1)
+                    if(i_req[i])
+                        next_access <= i;
+                o_busy[next_access] <= 0;
+            end
+        end else
+            o_busy <= {NUM_WRITERS{1'b1}};
     end
 
     `ifdef FORMAL
@@ -38,7 +51,6 @@ module arbiter
 
         // count busy lines
         reg [$clog2(NUM_WRITERS):0] busy_lines;  //initialize count variable.
-
         integer i;
         always @(*) begin
             busy_lines = 0;
@@ -46,14 +58,28 @@ module arbiter
                 if(o_busy[i] == 1'b1)
                     busy_lines = busy_lines + 1;
         end
-            
         
+        // assert that only one writer gets access at once
         always @(posedge i_clk)
-            if(f_past_valid)
-                assert(busy_lines >= NUM_WRITERS -1);
+            assert(busy_lines >= NUM_WRITERS -1);
 
+        // assume writers don't drop request line until getting access
         always @(posedge i_clk)
-            cover(busy_lines == NUM_WRITERS - 1);
+            if(f_past_valid) begin
+                for(i=0;i<NUM_WRITERS;i=i+1) begin
+                    if($past(o_busy[i]))
+                        assume($stable(i_req[i]));
+                end
+            end
+
+        // assume that in data is ZZ until busy line goes low
+        always @(posedge i_clk)
+            if(&o_busy)
+                assume(i_data == 8'hZZ);
+
+        // cover the case when all writers are requesting at once
+        always @(posedge i_clk)
+            cover(&i_req);
 
     `endif
 endmodule
