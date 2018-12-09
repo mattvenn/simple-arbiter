@@ -35,9 +35,12 @@ module arbiter
     end
 
     `ifdef FORMAL
-
-        writer #(.COUNTER_MAX(3)) writer_0 (.i_clk(i_clk), .i_reset(i_reset), .i_busy(o_busy[0]), .o_req(i_req[0]));    
-        writer #(.COUNTER_MAX(3)) writer_1 (.i_clk(i_clk), .i_reset(i_reset), .i_busy(o_busy[1]), .o_req(i_req[1]));    
+        // create the writer modules
+        generate
+            genvar j;
+            for(j=0;j<NUM_WRITERS;j=j+1)
+                writer #(.COUNTER_MAX(3)) writer_inst (.i_clk(i_clk), .i_reset(i_reset), .i_busy(o_busy[j]), .o_req(i_req[j]));    
+        endgenerate
         
         // past valid signal
         reg f_past_valid = 0;
