@@ -2,7 +2,7 @@
 
 module writer
 #(
-    parameter       COUNTER_MAX = 10
+    parameter       COUNTER_MAX = 5
 )
 (
     input           i_clk,
@@ -28,8 +28,7 @@ module writer
             state <= STATE_START;
             counter <= 0;
             o_req <= 0;
-        end
-        case(state)
+        end else case(state)
             STATE_START: begin
                 counter <= 0;
                 o_req <= 0;
@@ -62,12 +61,21 @@ module writer
         // start in i_reset
         initial restrict(i_reset);
 
+        // state machine stays bounded
         always @(posedge i_clk)
             assert(state < STATE_END);
 
+        // after requesting, don't drop till get no busy
         always @(posedge i_clk)
             if(f_past_valid)
-                cover(state == STATE_REQ && o_req == 1 && i_busy == 1);
+                if(!$past(i_reset) && $past(o_req) && $past(i_busy))
+                    assert($stable(o_req));
+
+
+        // cover requesting write while arbiter is busy
+        always @(posedge i_clk)
+            if(f_past_valid)
+                cover(state == STATE_REQ && o_req && i_busy);
 
     `endif
 endmodule
