@@ -2,16 +2,17 @@
 
 module arbiter
 #(
-    parameter       NUM_WRITERS = 2
+    parameter       NUM_WRITERS = 2,
+    parameter       DATA_W      = 8
 )
 (
     input                           i_clk,
     input                           i_reset,
 
-    input [NUM_WRITERS*8-1:0]       i_data,     // input data for all the writers
+    input [NUM_WRITERS*DATA_W-1:0]  i_data,     // input data for all the writers
     input [NUM_WRITERS-1:0]         i_req,      // write request from Writer module
     output reg [NUM_WRITERS-1:0]    o_busy,     // busy line, Writer must keep data
-    output reg [7:0]                o_data,
+    output reg [DATA_W-1:0]         o_data,
 
     output reg                      o_we,       // write to FIFO
 );
@@ -26,7 +27,7 @@ module arbiter
     always @(posedge i_clk) begin
         for(i=0;i<NUM_WRITERS;i=i+1)
             if(i_req[i] && !o_busy[i])
-                o_data <= i_data[i*8+7:i*8];
+                o_data <= i_data[i*DATA_W+DATA_W-1:i*DATA_W];
 
         o_we <= ! &o_busy;
     end
@@ -49,7 +50,7 @@ module arbiter
         generate
             genvar j;
             for(j=0;j<NUM_WRITERS;j=j+1)
-                writer #(.COUNTER_MAX(3+j)) writer_inst (.i_clk(i_clk), .i_reset(i_reset), .i_busy(o_busy[j]), .o_req(i_req[j]), .o_data(i_data[j*8+7:j*8]));
+                writer #(.COUNTER_MAX(3+j)) writer_inst (.i_clk(i_clk), .i_reset(i_reset), .i_busy(o_busy[j]), .o_req(i_req[j]), .o_data(i_data[j*DATA_W+DATA_W-1:j*DATA_W]));
         endgenerate
 
         reg [3:0] records;
