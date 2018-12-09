@@ -5,12 +5,12 @@ module writer
     parameter       COUNTER_MAX = 5
 )
 (
-    input           i_clk,
-    input           i_reset,
+    input               i_clk,
+    input               i_reset,
     
-    input           i_busy,
-    output reg      o_req,
-    output [7:0]    o_data
+    input               i_busy,
+    output reg          o_req,
+    output reg [7:0]    o_data
 );
 
     localparam STATE_START  = 0;
@@ -21,7 +21,7 @@ module writer
     reg [$clog2(STATE_END)-1:0] state = STATE_RUN;
     reg [7:0] counter = 0;
 
-    assign o_data = (i_busy == 0 && o_req == 1) ? counter : 8'hZZ;
+//    assign o_data = (i_busy == 0 && o_req == 1) ? counter : 8'hZZ;
 
     always @(posedge i_clk) begin
         if(i_reset) begin
@@ -43,6 +43,7 @@ module writer
 
             STATE_REQ: begin
                 o_req <= 1;
+                o_data <= counter;
                 if(i_busy == 0) begin
                     state <= STATE_START;
                     o_req <= 0;
@@ -69,11 +70,13 @@ module writer
         always @(posedge i_clk)
             assert(state < STATE_END);
 
-        // after requesting, don't drop till get no busy
+        // after requesting, don't drop till get no busy, and don't change data
         always @(posedge i_clk)
             if(f_past_valid)
-                if(!$past(i_reset) && $past(o_req) && $past(i_busy))
+                if(!$past(i_reset) && $past(o_req) && $past(i_busy)) begin
                     assert($stable(o_req));
+                    assert($stable(o_data));
+                end
 
         // after getting no busy, assert req is dropped after 1 cycle
         always @(posedge i_clk)

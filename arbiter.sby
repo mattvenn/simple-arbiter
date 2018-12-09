@@ -6,7 +6,7 @@ proof
 proof: mode prove
 proof: depth 10
 cover: mode cover
-cover: depth 20
+cover: depth 30
 cover: append 10
 
 [engines]

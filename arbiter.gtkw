@@ -1,11 +1,11 @@
 [*]
 [*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
-[*] Sun Dec  9 14:31:08 2018
+[*] Sun Dec  9 15:34:29 2018
 [*]
-[dumpfile] "/home/mattvenn/work/fpga/simple_arbiter/arbiter_proof/engine_0/trace.vcd"
-[dumpfile_mtime] "Sun Dec  9 14:30:28 2018"
-[dumpfile_size] 3112
-[savefile] "/home/mattvenn/work/fpga/simple_arbiter/arbiter_cover.gtkw"
+[dumpfile] "/home/mattvenn/work/fpga/simple_arbiter/arbiter_cover/engine_0/trace0.vcd"
+[dumpfile_mtime] "Sun Dec  9 15:34:08 2018"
+[dumpfile_size] 3130
+[savefile] "/home/mattvenn/work/fpga/simple_arbiter/arbiter.gtkw"
 [timestart] 0
 [size] 1413 600
 [pos] -1 -1
@@ -21,9 +21,7 @@ arbiter.i_reset
 -
 @24
 arbiter.busy_lines[1:0]
-@25
 arbiter.req_lines[1:0]
-@24
 arbiter.next_access
 @800028
 arbiter.o_busy[1:0]
@@ -42,5 +40,12 @@ arbiter.i_req[1:0]
 -group_end
 @28
 (0)arbiter.i_req[1:0]
+@200
+-
+@22
+arbiter.i_data[15:0]
+arbiter.o_data[7:0]
+@29
+arbiter.o_we
 [pattern_trace] 1
 [pattern_trace] 0

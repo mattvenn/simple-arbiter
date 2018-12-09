@@ -8,10 +8,12 @@ module arbiter
     input                           i_clk,
     input                           i_reset,
 
+    input [NUM_WRITERS*8-1:0]       i_data,     // input data for all the writers
     input [NUM_WRITERS-1:0]         i_req,      // write request from Writer module
     output reg [NUM_WRITERS-1:0]    o_busy,     // busy line, Writer must keep data
+    output reg [7:0]                o_data,
 
-    output                          o_we,       // write to FIFO
+    output reg                      o_we,       // write to FIFO
 );
     
     initial begin
@@ -20,6 +22,14 @@ module arbiter
     end
 
     reg [$clog2(NUM_WRITERS)-1:0] next_access = 0;
+
+    always @(posedge i_clk) begin
+        for(i=0;i<NUM_WRITERS;i=i+1)
+            if(i_req[i] && !o_busy[i])
+                o_data <= i_data[i*8+7:i*8];
+
+        o_we <= ! &o_busy;
+    end
 
     // bus arbiter
     always @(posedge i_clk) begin
@@ -39,7 +49,7 @@ module arbiter
         generate
             genvar j;
             for(j=0;j<NUM_WRITERS;j=j+1)
-                writer #(.COUNTER_MAX(3)) writer_inst (.i_clk(i_clk), .i_reset(i_reset), .i_busy(o_busy[j]), .o_req(i_req[j]));    
+                writer #(.COUNTER_MAX(3+j)) writer_inst (.i_clk(i_clk), .i_reset(i_reset), .i_busy(o_busy[j]), .o_req(i_req[j]), .o_data(i_data[j*8+7:j*8]));
         endgenerate
         
         // past valid signal
@@ -86,6 +96,18 @@ module arbiter
                 for(i=0;i<NUM_WRITERS;i=i+1)
                     if($past(!i_reset) && !i_reset && &o_busy && $past(i_req[i]) && $past(req_lines == 1))
                         assert(!$past(o_busy[i]));
+
+        // assert that o_we goes high when write is requested
+        always @(posedge i_clk)
+            if(f_past_valid)
+                if($past(!i_reset) && $past(busy_lines == 1))
+                    assert(o_we);
+
+        // assert that once o_we is high, data out is stable
+        always @(posedge i_clk)
+            if(f_past_valid)
+                if($past(o_we))
+                    assert($stable(o_data));
 
         // assume writers don't drop request line until getting access
         /*
