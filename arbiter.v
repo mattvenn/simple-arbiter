@@ -14,7 +14,7 @@ module arbiter
     output reg [NUM_WRITERS-1:0]    o_busy,     // busy line, Writer must keep data
     output reg [DATA_W-1:0]         o_data,
 
-    output reg                      o_we,       // write to FIFO
+    output reg                      o_we        // write to FIFO
 );
     
     initial begin
@@ -24,12 +24,13 @@ module arbiter
 
     reg [$clog2(NUM_WRITERS)-1:0] next_access = 0;
 
+    integer i;
     always @(posedge i_clk) begin
         for(i=0;i<NUM_WRITERS;i=i+1)
             if(i_req[i] && !o_busy[i])
-                o_data <= i_data[i*DATA_W+DATA_W-1:i*DATA_W];
+                o_data <= i_data[i*DATA_W +: DATA_W];
 
-        o_we <= ! &o_busy;
+        o_we <= !(&o_busy);
     end
 
     // bus arbiter
@@ -68,7 +69,6 @@ module arbiter
 
         // count busy lines
         reg [$clog2(NUM_WRITERS):0] busy_lines;  //initialize count variable.
-        integer i;
         always @(*) begin
             busy_lines = 0;
             for(i=0;i<NUM_WRITERS;i=i+1)
